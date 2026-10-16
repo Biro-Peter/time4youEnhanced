@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time 4 You - Film & Sorozat Ajánló</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+  :root {
+    --bg: linear-gradient(180deg, #cfe8ff 0%, #dbeafe 40%, #e0f2fe 100%);
+    --bg-solid: #dbeafe;
+    --surface: #ffffff;
+    --surface-2: rgba(255, 255, 255, 0.85);
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --text-soft: #475569;
+    --border: rgba(139, 0, 40, 0.2);
+    --border-soft: rgba(0, 0, 0, 0.08);
+    --bordo: #800020;
+    --bordo-dark: #5c0017;
+    --bordo-light: #a80030;
+    --accent: #800020;
+    --shadow: rgba(128, 0, 32, 0.15);
+    --card-shadow: 0 4px 15px rgba(128, 0, 32, 0.1);
+    --card-shadow-hover: 0 15px 35px rgba(128, 0, 32, 0.3);
+    --scroll-track: #dbeafe;
+    --scroll-thumb: #800020;
+    --placeholder-bg: #dbeafe;
+    --placeholder-text: #94a3b8;
+  }
+
+  body.dark {
+    --bg: linear-gradient(180deg, #0a0a0f 0%, #12121a 40%, #0f0f18 100%);
+    --bg-solid: #0a0a0f;
+    --surface: #1a1a24;
+    --surface-2: rgba(26, 26, 36, 0.9);
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-soft: #cbd5e1;
+    --border: rgba(168, 0, 48, 0.4);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --bordo: #a80030;
+    --bordo-dark: #800020;
+    --bordo-light: #d1003a;
+    --accent: #a80030;
+    --shadow: rgba(168, 0, 48, 0.3);
+    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    --card-shadow-hover: 0 15px 35px rgba(168, 0, 48, 0.4);
+    --scroll-track: #1a1a24;
+    --scroll-thumb: #a80030;
+    --placeholder-bg: #1a1a24;
+    --placeholder-text: #666;
+  }
+
+  body {
+    background: var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  body:not(.dark) {
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(128, 0, 32, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      var(--bg);
+  }
+
+  body.dark {
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(168, 0, 48, 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.08) 0%, transparent 50%),
+      var(--bg);
+  }
+
+  header {
+    background: var(--surface-2);
+    backdrop-filter: blur(15px);
+    padding: 18px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    box-shadow: 0 2px 20px var(--shadow);
+    transition: all 0.4s;
+  }
+
+  .logo {
+    font-size: 1.9rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--bordo), var(--bordo-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo::before { content: '🎬'; -webkit-text-fill-color: initial; font-size: 1.6rem; }
+
+  nav { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .nav-btn {
+    padding: 9px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    font-weight: 600;
+  }
+
+  .nav-btn:hover { 
+    background: var(--bordo); 
+    border-color: var(--bordo); 
+    color: #fff; 
+    transform: translateY(-2px); 
+  }
+  
+  .nav-btn.active { 
+    background: linear-gradient(135deg, var(--bordo), var(--bordo-dark)); 
+    color: white; 
+    border-color: var(--bordo); 
+    box-shadow: 0 5px 20px var(--shadow); 
+  }
+
+  .header-right { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+  .search-box { display: flex; gap: 10px; }
+
+  .search-box input {
+    padding: 10px 18px;
+    border-radius: 25px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s;
+    width: 220px;
+  }
+
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .search-box input:focus {
+    border-color: var(--bordo);
+    box-shadow: 0 0 15px var(--shadow);
+    width: 260px;
+  }
+
+  .theme-toggle {
+    width: 60px;
+    height: 32px;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover { border-color: var(--bordo); }
+
+  .theme-toggle .icon {
+    font-size: 0.9rem;
+    z-index: 1;
+    transition: opacity 0.3s;
+  }
+
+  .theme-toggle .slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bordo), var(--bordo-light));
+    transition: transform 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 2;
+  }
+
+  body.dark .theme-toggle .slider { transform: translateX(28px); }
+
+  .page { display: none; animation: fadeIn 0.4s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero {
+    padding: 50px 40px 30px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--shadow) 0%, transparent 100%);
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, var(--bordo), var(--bordo-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+  }
+
+  .hero p { color: var(--text-soft); font-size: 1.05rem; max-width: 600px; margin: 0 auto 30px; }
+
+  .main-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+  }
+
+  .main-btn {
+    padding: 22px 50px;
+    border-radius: 18px;
+    border: 2px solid var(--bordo);
+    cursor: pointer;
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.4s;
+    min-width: 220px;
+    justify-content: center;
+    letter-spacing: 0.5px;
+    background: var(--surface);
+    color: var(--bordo);
+    box-shadow: 0 5px 20px var(--shadow);
+  }
+
+  body.dark .main-btn { color: #ff6b8a; border-color: var(--bordo-light); }
+
+  .main-btn:hover {
+    background: linear-gradient(135deg, var(--bordo), var(--bordo-dark));
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px var(--shadow);
+  }
+
+  .section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .section-header h2 {
+    font-size: 1.5rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+  }
+
+  .section-header .subtitle { color: var(--text-muted); font-size: 0.9rem; }
+
+  .section-header .see-all {
+    margin-left: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    font-weight: 600;
+  }
+
+  .section-header .see-all:hover { 
+    background: var(--bordo); 
+    border-color: var(--bordo); 
+    color: #fff; 
+  }
+
+  .row-wrapper {
+    position: relative;
+    padding: 0 60px;
+  }
+
+  .scroll-row {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 8px 0 15px;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+
+  .scroll-row::-webkit-scrollbar { display: none; }
+
+  .scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: #fff;
+    font-size: 2.2rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
+    font-weight: bold;
+    line-height: 1;
+    padding-bottom: 5px;
+  }
+
+  .scroll-btn:hover {
+    background: var(--bordo);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .scroll-btn.left { left: 5px; }
+  .scroll-btn.right { right: 5px; }
+
+  .top10-item {
+    flex: 0 0 200px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .top10-item:hover { transform: translateY(-5px); }
+
+  .top10-poster-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--surface);
+    box-shadow: var(--card-shadow);
+  }
+
+  .top10-rank {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--bordo), var(--bordo-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+    z-index: 3;
+    box-shadow: 0 5px 20px var(--shadow);
+    border: 3px solid var(--surface);
+  }
+
+  .top10-poster-wrap img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+
+  .top10-item:hover .top10-poster-wrap img { transform: scale(1.08); }
+
+  .top10-poster-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+  }
+
+  .top10-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    z-index: 2;
+  }
+
+  .top10-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .top10-rating { font-size: 0.8rem; color: #ffd700; font-weight: bold; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--card-shadow);
+    position: relative;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    border-color: var(--bordo);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .card-poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    position: relative;
+    overflow: hidden;
+    background: var(--placeholder-bg);
+  }
+
+  .card-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+    display: block;
+  }
+
+  .card:hover .card-poster img { transform: scale(1.08); }
+
+  .card-poster::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+  }
+
+  .new-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, var(--bordo), var(--bordo-dark));
+    color: white;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 2;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 10px var(--shadow);
+  }
+
+  .rating-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(5px);
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.78rem;
+    font-weight: bold;
+    color: #b45309;
+    z-index: 2;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+  }
+
+  .card-info {
+    padding: 12px;
+    position: relative;
+    z-index: 2;
+    margin-top: -30px;
+    background: linear-gradient(180deg, transparent, var(--surface) 40%);
+  }
+
+  .card-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+    line-height: 1.25;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+
+  .card-meta span {
+    background: rgba(128, 0, 32, 0.1);
+    padding: 2px 7px;
+    border-radius: 8px;
+    color: var(--bordo);
+    font-weight: 600;
+  }
+
+  body.dark .card-meta span { background: rgba(168, 0, 48, 0.2); color: #ff6b8a; }
+
+  .category-header {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 40px 20px;
+  }
+
+  .category-header .back-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+    font-weight: 600;
+  }
+
+  .category-header .back-btn:hover { 
+    background: var(--bordo); 
+    border-color: var(--bordo); 
+    color: #fff; 
+  }
+
+  .category-header h2 {
+    font-size: 2rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 800;
+  }
+
+  .category-header p { color: var(--text-muted); }
+
+  .cat-buttons {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 40px 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .cat-tile {
+    padding: 20px 15px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--card-shadow);
+  }
+
+  .cat-tile .emoji { font-size: 1.8rem; }
+
+  .cat-tile:hover {
+    border-color: var(--bordo);
+    background: var(--bordo);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .cat-tile:hover .cat-count { color: #fff; }
+
+  .cat-count { font-size: 0.75rem; color: var(--text-muted); font-weight: normal; }
+
+  .detail-page { max-width: 1200px; margin: 0 auto; padding: 40px 30px 80px; }
+
+  .detail-page .back-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    transition: all 0.3s;
+    font-weight: 600;
+  }
+
+  .detail-page .back-btn:hover { 
+    background: var(--bordo); 
+    border-color: var(--bordo); 
+    color: #fff; 
+  }
+
+  .detail-hero {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .detail-poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px var(--shadow);
+    border: 3px solid var(--surface);
+  }
+
+  .detail-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .detail-info h1 {
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    margin-bottom: 15px;
+    color: var(--text);
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .detail-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+
+  .detail-tag {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.83rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .detail-tag.red { 
+    background: rgba(128, 0, 32, 0.12); 
+    border-color: var(--bordo); 
+    color: var(--bordo); 
+  }
+  
+  body.dark .detail-tag.red { 
+    background: rgba(168, 0, 48, 0.25); 
+    color: #ff6b8a; 
+  }
+
+  .detail-tag.blue { 
+    background: rgba(59, 130, 246, 0.15); 
+    border-color: #3b82f6; 
+    color: #1e40af; 
+  }
+
+  body.dark .detail-tag.blue { color: #6bb6ff; }
+
+  .detail-tag.gold { 
+    background: rgba(255, 215, 0, 0.2); 
+    border-color: rgba(180,83,9,0.4); 
+    color: #b45309; 
+  }
+
+  .detail-desc {
+    line-height: 1.8;
+    color: var(--text-soft);
+    margin-bottom: 25px;
+    font-size: 1.02rem;
+  }
+
+  .info-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+
+  .info-box {
+    background: var(--surface);
+    padding: 14px;
+    border-radius: 12px;
+    border-left: 3px solid var(--bordo);
+    box-shadow: var(--card-shadow);
+  }
+
+  .info-box .lbl {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .info-box .val { font-size: 1rem; color: var(--text); font-weight: 700; }
+
+  .cast-section {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 15px;
+    padding: 22px;
+    margin-bottom: 25px;
+    box-shadow: var(--card-shadow);
+  }
+
+  .cast-section h3 {
+    color: var(--text);
+    font-size: 1.1rem;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  .cast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+  }
+
+  .cast-item { text-align: center; transition: transform 0.3s; }
+  .cast-item:hover { transform: translateY(-3px); }
+
+  .cast-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 10px;
+    border: 3px solid var(--bordo);
+    background: var(--placeholder-bg);
+    position: relative;
+    box-shadow: 0 5px 15px var(--shadow);
+  }
+
+  .cast-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .cast-name {
+    font-size: 0.82rem;
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .cast-role { font-size: 0.72rem; color: var(--text-muted); line-height: 1.2; }
+
+  .platforms-section {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 15px;
+    padding: 22px;
+    margin-bottom: 25px;
+    box-shadow: var(--card-shadow);
+  }
+
+  .platforms-section h3 {
+    color: var(--text);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  .platforms-list { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .platform-chip {
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .platform-chip.netflix { background: #e50914; }
+  .platform-chip.hbo { background: #6a1b9a; }
+  .platform-chip.disney { background: #113ccf; }
+  .platform-chip.apple { background: #333; }
+  .platform-chip.prime { background: #00a8e1; }
+  .platform-chip.paramount { background: #0064ff; }
+
+  .similar-section { margin-top: 30px; }
+  .similar-section h3 { color: var(--text); font-size: 1.2rem; margin-bottom: 15px; font-weight: 700; }
+
+  .similar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+  }
+
+  .similar-card { cursor: pointer; transition: transform 0.3s; }
+  .similar-card:hover { transform: translateY(-5px); }
+
+  .similar-card img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid var(--surface);
+    display: block;
+    box-shadow: var(--card-shadow);
+  }
+
+  .similar-card .title {
+    font-size: 0.82rem;
+    color: var(--text);
+    margin-top: 8px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); grid-column: 1 / -1; }
+  .empty div { font-size: 4rem; margin-bottom: 15px; }
+
+  footer { 
+    text-align: center; 
+    padding: 30px; 
+    color: var(--text-muted); 
+    font-size: 0.9rem; 
+    border-top: 1px solid var(--border-soft); 
+  }
+  
+  footer span { 
+    color: var(--bordo); 
+    font-weight: 700; 
+  }
+
+  body.dark footer span { color: #ff6b8a; }
+  @media (max-width: 768px) {
+    header { padding: 15px 20px; }
+    .logo { font-size: 1.5rem; }
+    .search-box input { width: 160px; }
+    .search-box input:focus { width: 180px; }
+    .hero { padding: 35px 20px 20px; }
+    .section { padding: 25px 20px; }
+    .row-wrapper { padding: 0 45px; }
+    .scroll-btn { width: 38px; height: 80px; font-size: 1.6rem; }
+    .scroll-btn.left { left: 2px; }
+    .scroll-btn.right { right: 2px; }
+    .category-header { padding: 25px 20px 15px; }
+    .cat-buttons { padding: 10px 20px 25px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+    .top10-item { flex: 0 0 160px; }
+    .main-btn { padding: 18px 30px; font-size: 1.1rem; min-width: 160px; }
+    .detail-hero { grid-template-columns: 1fr; gap: 25px; }
+    .detail-poster { max-width: 260px; margin: 0 auto; }
+    .detail-page { padding: 25px 20px 60px; }
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--scroll-track); }
+  ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 5px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="goHome()">Time 4 You</div>
+  <nav>
+    <button class="nav-btn" data-nav="home" onclick="goHome()">🏠 Főoldal</button>
+    <button class="nav-btn" data-nav="films" onclick="showCategories('film')">🎥 Filmek</button>
+    <button class="nav-btn" data-nav="series" onclick="showCategories('sorozat')">📺 Sorozatok</button>
+  </nav>
+  <div class="header-right">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="🔍 Keresés...">
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Világos/Sötét mód">
+      <span class="icon">☀️</span>
+      <span class="icon">🌙</span>
+      <div class="slider"></div>
+    </button>
+  </div>
+</header>
+
+<div id="page-home" class="page active">
+  <section class="hero">
+    <h1>Time 4 You</h1>
+    <p>A legjobb filmek és sorozatok egy helyen – Top 10 listák, új megjelenések és kategóriák</p>
+    
+    <div class="main-buttons">
+      <button class="main-btn" onclick="showCategories('film')">🎥 Filmek</button>
+      <button class="main-btn" onclick="showCategories('sorozat')">📺 Sorozatok</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>🏆 Top 10 Film</h2>
+      <span class="subtitle">A legjobb értékelésű filmek</span>
+      <button class="see-all" onclick="showAll('film', 'top')">Összes →</button>
+    </div>
+    <div class="row-wrapper">
+      <button class="scroll-btn left" onclick="scrollRow('top10Films', -1)">‹</button>
+      <div class="scroll-row" id="top10Films"></div>
+      <button class="scroll-btn right" onclick="scrollRow('top10Films', 1)">›</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>🏆 Top 10 Sorozat</h2>
+      <span class="subtitle">A legjobb értékelésű sorozatok</span>
+      <button class="see-all" onclick="showAll('sorozat', 'top')">Összes →</button>
+    </div>
+    <div class="row-wrapper">
+      <button class="scroll-btn left" onclick="scrollRow('top10Series', -1)">‹</button>
+      <div class="scroll-row" id="top10Series"></div>
+      <button class="scroll-btn right" onclick="scrollRow('top10Series', 1)">›</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>✨ Új megjelenések</h2>
+      <span class="subtitle">Friss filmek és sorozatok</span>
+    </div>
+    <div class="grid" id="newReleases"></div>
+  </section>
+</div>
+
+<div id="page-categories" class="page">
+  <div class="category-header">
+    <button class="back-btn" onclick="goHome()">← Vissza a főoldalra</button>
+    <h2 id="catTitle"></h2>
+    <p id="catSubtitle"></p>
+  </div>
+  <div class="cat-buttons" id="catButtons"></div>
+</div>
+
+<div id="page-list" class="page">
+  <div class="category-header">
+    <button class="back-btn" id="listBackBtn">← Vissza</button>
+    <h2 id="listTitle"></h2>
+    <p id="listSubtitle"></p>
+  </div>
+  <div class="section">
+    <div class="grid" id="listGrid"></div>
+  </div>
+</div>
+
+<div id="page-detail" class="page">
+  <div class="detail-page" id="detailContent"></div>
+</div>
+
+<footer>
+  Készítette: <span>Time 4 You</span> · Film és sorozat ajánló © 2024
+</footer>
+
+<script>
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  const isDark = document.body.classList.contains("dark");
+  localStorage.setItem("t4u-theme", isDark ? "dark" : "light");
+}
+
+if (localStorage.getItem("t4u-theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+const content = [
+  {
+    id: 1, type: "film", title: "A Keresztapa", year: 1972, rating: 9.2, genre: "Dráma",
+    director: "Francis Ford Coppola", duration: "175 perc",
+    poster: "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+    cast: [
+      {name: "Marlon Brando", role: "Vito Corleone", img: "https://image.tmdb.org/t/p/w200/eEslKSwcqmiNS6va24Pbxf2UKmJ.jpg"},
+      {name: "Al Pacino", role: "Michael Corleone", img: "https://image.tmdb.org/t/p/w200/2dGBb1fOcNdZjtQToVPFxXjm4ke.jpg"},
+      {name: "James Caan", role: "Sonny Corleone", img: "https://image.tmdb.org/t/p/w200/4L3BQD7DKBnq7eXwEDjBA6cO1oO.jpg"},
+      {name: "Robert Duvall", role: "Tom Hagen", img: "https://image.tmdb.org/t/p/w200/1aO9x6MHT6WCU4G7NlgzXhzB3nN.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "A Corleone maffiacsalád története, amely a patriarcha életét és hatalmának átadását követi fiának, Michaelnek. A filmtörténelem egyik legnagyobb hatású alkotása, mely a család, a hatalom és a hűség témáit járja körül mesterien."
+  },
+  {
+    id: 2, type: "film", title: "Ponyvaregény", year: 1994, rating: 8.9, genre: "Krimi",
+    director: "Quentin Tarantino", duration: "154 perc",
+    poster: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+    cast: [
+      {name: "John Travolta", role: "Vincent Vega", img: "https://image.tmdb.org/t/p/w200/ap8hWutU4qCR8X0d3xHMWL1aRWs.jpg"},
+      {name: "Samuel L. Jackson", role: "Jules Winnfield", img: "https://image.tmdb.org/t/p/w200/AiAYAqwpM5xmiFrAIeQvUXDCVvo.jpg"},
+      {name: "Uma Thurman", role: "Mia Wallace", img: "https://image.tmdb.org/t/p/w200/v4QwV5m3vB3pRwFqGYb7xQxH4EW.jpg"},
+      {name: "Bruce Willis", role: "Butch Coolidge", img: "https://image.tmdb.org/t/p/w200/wl4LM8rHnK7WJd4NFAj9U8dK7Q.jpg"}
+    ],
+    platforms: ["Netflix", "HBO Max"],
+    desc: "Tarantino ikonikus filmje összefonódó történetekről szól: bérgyilkosok, bokszoló, gengszterfeleség és két rabló sorsa fonódik össze egy nem lineáris narratívában."
+  },
+  {
+    id: 3, type: "film", title: "A Sötét Lovag", year: 2008, rating: 9.0, genre: "Akció",
+    director: "Christopher Nolan", duration: "152 perc",
+    poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+    cast: [
+      {name: "Christian Bale", role: "Bruce Wayne", img: "https://image.tmdb.org/t/p/w200/qCpZn2e3dimwbryLnqxZuI88PTx.jpg"},
+      {name: "Heath Ledger", role: "Joker", img: "https://image.tmdb.org/t/p/w200/5Y9HnYYa9jF4NunY9lSgJGjSe8E.jpg"},
+      {name: "Aaron Eckhart", role: "Harvey Dent", img: "https://image.tmdb.org/t/p/w200/2jF0hC5D5DqBqp8fFdvY8aPoKHw.jpg"},
+      {name: "Michael Caine", role: "Alfred", img: "https://image.tmdb.org/t/p/w200/bVZRMlp09rA4yj2mLx0gFyH4XqY.jpg"}
+    ],
+    platforms: ["HBO Max", "Netflix"],
+    desc: "Batman szembeszáll a káoszt hirdető Jokerrel, aki Gotham városát akarja romba dönteni. Heath Ledger legendás alakítása és Nolan rendezése új szintre emelte a szuperhősfilmeket."
+  },
+  {
+    id: 4, type: "film", title: "Inception", year: 2010, rating: 8.8, genre: "Sci-fi",
+    director: "Christopher Nolan", duration: "148 perc",
+    poster: "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
+    cast: [
+      {name: "Leonardo DiCaprio", role: "Cobb", img: "https://image.tmdb.org/t/p/w200/wo2hJpn04vbtmh0B9utCFdsQhxM.jpg"},
+      {name: "Joseph Gordon-Levitt", role: "Arthur", img: "https://image.tmdb.org/t/p/w200/z2FA8js799xqtfiFjFWrDwGxI6y.jpg"},
+      {name: "Elliot Page", role: "Ariadne", img: "https://image.tmdb.org/t/p/w200/nWoFElQ7XWx6Y9tF1Wl9OaUpnU9.jpg"},
+      {name: "Tom Hardy", role: "Eames", img: "https://image.tmdb.org/t/p/w200/d81K0RH8UX7tZj49tZaQhZ9ewH.jpg"}
+    ],
+    platforms: ["Netflix", "HBO Max"],
+    desc: "Dom Cobb álomtolvaj, aki utolsó munkájában álomba ültetett ötletet kell elhelyeznie egy cégvezető fejében. Többrétegű álomvilág, látványos akciók és filozófiai mélység."
+  },
+  {
+    id: 5, type: "film", title: "Forrest Gump", year: 1994, rating: 8.8, genre: "Dráma",
+    director: "Robert Zemeckis", duration: "142 perc",
+    poster: "https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",
+    cast: [
+      {name: "Tom Hanks", role: "Forrest Gump", img: "https://image.tmdb.org/t/p/w200/xndWFsBlClOJFRdhSt4NBwiPq2o.jpg"},
+      {name: "Robin Wright", role: "Jenny", img: "https://image.tmdb.org/t/p/w200/1uXnKQwHwGxdVcEWvGv4nDqvkuP.jpg"},
+      {name: "Gary Sinise", role: "Lieutenant Dan", img: "https://image.tmdb.org/t/p/w200/1dWv2d8wK0a5L1R4bUlbuOW2p8z.jpg"},
+      {name: "Sally Field", role: "Mrs. Gump", img: "https://image.tmdb.org/t/p/w200/8fwJvJm6v8yT4WZlCVFd4h1fpvB.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "Egy alacsony IQ-jú, de tiszta szívű férfi életútja az 1950-es évektől napjainkig, miközben véletlenül részese lesz Amerika történelmének kulcsfontosságú eseményeinek."
+  },
+  {
+    id: 6, type: "film", title: "Mátrix", year: 1999, rating: 8.7, genre: "Sci-fi",
+    director: "Lana & Lilly Wachowski", duration: "136 perc",
+    poster: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+    cast: [
+      {name: "Keanu Reeves", role: "Neo", img: "https://image.tmdb.org/t/p/w200/4D0PpNI0kmP58hgrwGC3wCjxhnm.jpg"},
+      {name: "Laurence Fishburne", role: "Morpheus", img: "https://image.tmdb.org/t/p/w200/8h6a4Xe6L5cPjEaC0S5l7w5hWQD.jpg"},
+      {name: "Carrie-Anne Moss", role: "Trinity", img: "https://image.tmdb.org/t/p/w200/xD4jTA3KmVp5Rq3aHcymL9D3Hqs.jpg"},
+      {name: "Hugo Weaving", role: "Smith ügynök", img: "https://image.tmdb.org/t/p/w200/lSC8kMtP6Q5pR6lZ5S4C4wRq6Bt.jpg"}
+    ],
+    platforms: ["HBO Max"],
+    desc: "Neo felfedezi, hogy a valóság csak szimuláció, és csatlakozik a gépek elleni lázadáshoz. Forradalmi vizuális effektek és mély filozófiai kérdések."
+  },
+  {
+    id: 7, type: "film", title: "Gladiátor", year: 2000, rating: 8.5, genre: "Akció",
+    director: "Ridley Scott", duration: "155 perc",
+    poster: "https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg",
+    cast: [
+      {name: "Russell Crowe", role: "Maximus", img: "https://image.tmdb.org/t/p/w200/6UO5J4d5QzOq5V5h5X5y5X5y5X5.jpg"},
+      {name: "Joaquin Phoenix", role: "Commodus", img: "https://image.tmdb.org/t/p/w200/6d5SJdVJdZ5nZq6H5v5j5v5j5v5.jpg"},
+      {name: "Connie Nielsen", role: "Lucilla", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5.jpg"},
+      {name: "Oliver Reed", role: "Proximo", img: "https://image.tmdb.org/t/p/w200/4j4j4j4j4j4j4j4j4j4j4j4j4j4j.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "Maximus római tábornokot elárulják és rabszolgává teszik, így gladiátorként küzd a bosszúért. Epikus történet a becsületről és a hűségről."
+  },
+  {
+    id: 8, type: "film", title: "Interstellar", year: 2014, rating: 8.6, genre: "Sci-fi",
+    director: "Christopher Nolan", duration: "169 perc",
+    poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+    cast: [
+      {name: "Matthew McConaughey", role: "Cooper", img: "https://image.tmdb.org/t/p/w200/wJiGedOCZhwMx9DezY8uwbNxmAY.jpg"},
+      {name: "Anne Hathaway", role: "Brand", img: "https://image.tmdb.org/t/p/w200/tLelKoPNiyJCSEtQTz1FGv4TLGc.jpg"},
+      {name: "Jessica Chastain", role: "Murph", img: "https://image.tmdb.org/t/p/w200/lQ0mQGj6XjK7l6Wn8y3T4Lw5zR9.jpg"},
+      {name: "Michael Caine", role: "Professor Brand", img: "https://image.tmdb.org/t/p/w200/bVZRMlp09rA4yj2mLx0gFyH4XqY.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "A Föld haldoklik, egy csapat kutató féregjáraton keresztül új lakható bolygót keres. A szeretet és az idő relativitásának megrázó története."
+  },
+  {
+    id: 9, type: "film", title: "Whiplash", year: 2014, rating: 8.5, genre: "Dráma",
+    director: "Damien Chazelle", duration: "107 perc",
+    poster: "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
+    cast: [
+      {name: "Miles Teller", role: "Andrew", img: "https://image.tmdb.org/t/p/w200/gJ4J8j4j4j4j4j4j4j4j4j4j4j4j.jpg"},
+      {name: "J.K. Simmons", role: "Fletcher", img: "https://image.tmdb.org/t/p/w200/21T7Q5j5j5j5j5j5j5j5j5j5j5j5.jpg"},
+      {name: "Paul Reiser", role: "Jim Neimann", img: "https://image.tmdb.org/t/p/w200/3j3j3j3j3j3j3j3j3j3j3j3j3j3j.jpg"},
+      {name: "Melissa Benoist", role: "Nicole", img: "https://image.tmdb.org/t/p/w200/4j4j4j4j4j4j4j4j4j4j4j4j4j4j.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "Egy ambiciózus jazzdobos és szadista tanára közötti feszült kapcsolat. A tökéletesség hajszolása és az áldozatok, amiket ezért hozni kell."
+  },
+  {
+    id: 10, type: "film", title: "Joker", year: 2019, rating: 8.4, genre: "Dráma",
+    director: "Todd Phillips", duration: "122 perc",
+    poster: "https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg",
+    cast: [
+      {name: "Joaquin Phoenix", role: "Arthur Fleck", img: "https://image.tmdb.org/t/p/w200/nB5C5j5j5j5j5j5j5j5j5j5j5j5j5.jpg"},
+      {name: "Robert De Niro", role: "Murray Franklin", img: "https://image.tmdb.org/t/p/w200/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg"},
+      {name: "Zazie Beetz", role: "Sophie", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Frances Conroy", role: "Penny Fleck", img: "https://image.tmdb.org/t/p/w200/a8a8a8a8a8a8a8a8a8a8a8a8a8a8.jpg"}
+    ],
+    platforms: ["HBO Max", "Netflix"],
+    desc: "Arthur Fleck, a kudarcos komikus lassan a bűnözés és az őrület útjára lép. Joaquin Phoenix Oscar-díjas alakítása lenyűgöző."
+  },
+  {
+    id: 11, type: "film", title: "Oppenheimer", year: 2023, rating: 8.3, genre: "Dráma",
+    director: "Christopher Nolan", duration: "180 perc",
+    poster: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+    cast: [
+      {name: "Cillian Murphy", role: "Oppenheimer", img: "https://image.tmdb.org/t/p/w200/dm6V8VjN4D2lRlZQPYcVw8W8W8W.jpg"},
+      {name: "Emily Blunt", role: "Kitty", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Robert Downey Jr.", role: "Lewis Strauss", img: "https://image.tmdb.org/t/p/w200/5qHNjqzh3zHcx5tbmJn0tBpBoOx.jpg"},
+      {name: "Matt Damon", role: "Groves tábornok", img: "https://image.tmdb.org/t/p/w200/At3JgvaNeEN4Z4ESKlhhes85Xo3.jpg"}
+    ],
+    platforms: ["Prime", "Apple TV"],
+    desc: "J. Robert Oppenheimer életének és az atombomba megalkotásának drámai története. Nolan epikus alkotása, Cillian Murphy zseniális alakításával."
+  },
+  {
+    id: 12, type: "film", title: "Django elszabadul", year: 2012, rating: 8.4, genre: "Akció",
+    director: "Quentin Tarantino", duration: "165 perc",
+    poster: "https://image.tmdb.org/t/p/w500/7oWY8VDWW7thTzWh3OKYRkWUlD5.jpg",
+    cast: [
+      {name: "Jamie Foxx", role: "Django", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Christoph Waltz", role: "Dr. King Schultz", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Leonardo DiCaprio", role: "Calvin Candie", img: "https://image.tmdb.org/t/p/w200/wo2hJpn04vbtmh0B9utCFdsQhxM.jpg"},
+      {name: "Samuel L. Jackson", role: "Stephen", img: "https://image.tmdb.org/t/p/w200/AiAYAqwpM5xmiFrAIeQvUXDCVvo.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "Egy felszabadított rabszolga és egy német fejvadász összefog, hogy kiszabadítsák Django feleségét egy kegyetlen ültetvényes fogságából."
+  },
+  {
+    id: 13, type: "film", title: "Top Gun: Maverick", year: 2022, rating: 8.2, genre: "Akció",
+    director: "Joseph Kosinski", duration: "130 perc",
+    poster: "https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg",
+    cast: [
+      {name: "Tom Cruise", role: "Maverick", img: "https://image.tmdb.org/t/p/w200/eOh4ubpOm2Igdg0QH2ghj0mFtC.jpg"},
+      {name: "Miles Teller", role: "Rooster", img: "https://image.tmdb.org/t/p/w200/gJ4J8j4j4j4j4j4j4j4j4j4j4j4j.jpg"},
+      {name: "Jennifer Connelly", role: "Penny", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Jon Hamm", role: "Cyclone", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Paramount+", "Prime"],
+    desc: "Maverick visszatér, hogy kiképezze az új generációt egy lehetetlen küldetésre. Látványos repülős jelenetek és nosztalgia."
+  },
+  {
+    id: 14, type: "film", title: "Toy Story", year: 1995, rating: 8.3, genre: "Animáció",
+    director: "John Lasseter", duration: "81 perc",
+    poster: "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+    cast: [
+      {name: "Tom Hanks", role: "Woody (hang)", img: "https://image.tmdb.org/t/p/w200/xndWFsBlClOJFRdhSt4NBwiPq2o.jpg"},
+      {name: "Tim Allen", role: "Buzz (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Don Rickles", role: "Mr. Potato Head", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Jim Varney", role: "Slinky Dog", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Disney+"],
+    desc: "Woody és Buzz barátságának története, mely elindította a Pixar forradalmát. Az első teljesen számítógéppel animált egész estés film."
+  },
+  {
+    id: 15, type: "film", title: "Ragadozó", year: 2023, rating: 7.9, genre: "Horror",
+    director: "Dan Trachtenberg", duration: "99 perc",
+    poster: "https://image.tmdb.org/t/p/w500/sg6kvz6M7dFfWbN0fXd5w1K5K5b.jpg",
+    cast: [
+      {name: "Amber Midthunder", role: "Naru", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Dakota Beavers", role: "Taabe", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Michelle Thrush", role: "Aruka", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Stormee Kipp", role: "Wasape", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Disney+"],
+    desc: "Egy fiatal komancs nő szembeszáll egy fejlett idegen ragadozóval, aki a 18. századi Észak-Amerikában vadászik. Feszült, akció-dús horror."
+  },
+  {
+    id: 16, type: "film", title: "Sikoly", year: 2022, rating: 6.9, genre: "Horror",
+    director: "Radio Silence", duration: "114 perc",
+    poster: "https://image.tmdb.org/t/p/w500/1m3W6c9Xw7q6e6j5v5j5v5j5v5.jpg",
+    cast: [
+      {name: "Melissa Barrera", role: "Sam", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Jenna Ortega", role: "Tara", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Mason Gooding", role: "Chad", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Jasmin Savoy Brown", role: "Mindy", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Paramount+"],
+    desc: "A Ghostface gyilkos visszatér Woodsboróba, ezúttal a régi túlélők és az új generáció ellen. A klasszikus slasher-sorozat modern folytatása."
+  },
+  {
+    id: 17, type: "film", title: "Barbie", year: 2023, rating: 6.8, genre: "Vígjáték",
+    director: "Greta Gerwig", duration: "114 perc",
+    poster: "https://image.tmdb.org/t/p/w500/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
+    cast: [
+      {name: "Margot Robbie", role: "Barbie", img: "https://image.tmdb.org/t/p/w200/euDPyqLnuwaWMHajcU3oZ9uZezR.jpg"},
+      {name: "Ryan Gosling", role: "Ken", img: "https://image.tmdb.org/t/p/w200/lyUyVARQKhGxaxy0FbPJCQRpiaW.jpg"},
+      {name: "America Ferrera", role: "Gloria", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Kate McKinnon", role: "Weird Barbie", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["HBO Max"],
+    desc: "Barbie és Ken kalandja a Barbie-világból a valódi világba. Szórakoztató, szatirikus és meglepően mély mondanivalóval bír."
+  },
+  {
+    id: 18, type: "film", title: "John Wick 4", year: 2023, rating: 7.7, genre: "Akció",
+    director: "Chad Stahelski", duration: "169 perc",
+    poster: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
+    cast: [
+      {name: "Keanu Reeves", role: "John Wick", img: "https://image.tmdb.org/t/p/w200/4D0PpNI0kmP58hgrwGC3wCjxhnm.jpg"},
+      {name: "Donnie Yen", role: "Caine", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Bill Skarsgård", role: "Marquis", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Ian McShane", role: "Winston", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Prime", "Apple TV"],
+    desc: "John Wick visszatér, hogy leszámoljon a Főtáblával. Látványos akciójelenetek, koreográfia és kíméletlen harc."
+  },
+  {
+    id: 19, type: "film", title: "A Gyűrűk Ura: A Gyűrű Szövetsége", year: 2001, rating: 8.9, genre: "Fantasy",
+    director: "Peter Jackson", duration: "178 perc",
+    poster: "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+    cast: [
+      {name: "Elijah Wood", role: "Frodo", img: "https://image.tmdb.org/t/p/w200/7UKRbJBNG7mxBl2QQc5XsAh6F8B.jpg"},
+      {name: "Ian McKellen", role: "Gandalf", img: "https://image.tmdb.org/t/p/w200/5vHssUeVe25bMrof1HyaPyWgaP.jpg"},
+      {name: "Viggo Mortensen", role: "Aragorn", img: "https://image.tmdb.org/t/p/w200/vH5gV6B7bD4sQ2j1cWqmVK9k7dC.jpg"},
+      {name: "Sean Astin", role: "Sam", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["HBO Max", "Prime"],
+    desc: "Frodo elindul, hogy megsemmisítse a Mindenható Gyűrűt. Tolkien epikus világának lélegzetelállító filmes adaptációja."
+  },
+  {
+    id: 20, type: "film", title: "Star Wars: Az ébredő Erő", year: 2015, rating: 7.8, genre: "Sci-fi",
+    director: "J.J. Abrams", duration: "138 perc",
+    poster: "https://image.tmdb.org/t/p/w500/wqnLdwVXoBjKibFRR5U3y0aDUhs.jpg",
+    cast: [
+      {name: "Daisy Ridley", role: "Rey", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "John Boyega", role: "Finn", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Oscar Isaac", role: "Poe", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Harrison Ford", role: "Han Solo", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Disney+"],
+    desc: "Egy új generáció veszi át a stafétát a Galaxisban. Rey, Finn és Poe kalandjai az Első Renddel szemben."
+  },
+
+
+  {
+    id: 101, type: "sorozat", title: "Breaking Bad", year: 2008, rating: 9.5, genre: "Krimi",
+    director: "Vince Gilligan", duration: "5 évad · 62 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg",
+    cast: [
+      {name: "Bryan Cranston", role: "Walter White", img: "https://image.tmdb.org/t/p/w200/7Jahy5LZX2Fo8fGJltMreAI49hC.jpg"},
+      {name: "Aaron Paul", role: "Jesse Pinkman", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Anna Gunn", role: "Skyler", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Dean Norris", role: "Hank", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Walter White középiskolai kémiatanárból lesz drogbáró, miután rájön, hogy halálos beteg. A hatalom, a család és a moralitás határait feszegető sorozat."
+  },
+  {
+    id: 102, type: "sorozat", title: "Trónok harca", year: 2011, rating: 9.2, genre: "Fantasy",
+    director: "David Benioff & D.B. Weiss", duration: "8 évad · 73 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg",
+    cast: [
+      {name: "Emilia Clarke", role: "Daenerys", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Peter Dinklage", role: "Tyrion", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Kit Harington", role: "Jon Snow", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Lena Headey", role: "Cersei", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["HBO Max"],
+    desc: "Hét nemesi ház küzd a Vasfőtrónért a Westeros kontinensen, miközben egy ősi fenyegetés közeledik északról."
+  },
+  {
+    id: 103, type: "sorozat", title: "Stranger Things", year: 2016, rating: 8.7, genre: "Sci-fi",
+    director: "Duffer testvérek", duration: "4 évad · 34 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
+    cast: [
+      {name: "Millie Bobby Brown", role: "Eleven", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Finn Wolfhard", role: "Mike", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Winona Ryder", role: "Joyce", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "David Harbour", role: "Hopper", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Az 1980-as évekbeli Hawkins kisvárosban egy fiú eltűnik, és barátai egy különös lányra és egy ijesztő dimenzióra bukkannak."
+  },
+  {
+    id: 104, type: "sorozat", title: "A Korona", year: 2016, rating: 8.6, genre: "Dráma",
+    director: "Peter Morgan", duration: "6 évad · 60 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/9SFmHU8PByHNKTIvJ3eZb2adKvj.jpg",
+    cast: [
+      {name: "Claire Foy", role: "II. Erzsébet", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Olivia Colman", role: "II. Erzsébet", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Imelda Staunton", role: "II. Erzsébet", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Matt Smith", role: "Fülöp herceg", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "II. Erzsébet királynő uralkodásának története az 1940-es évektől napjainkig. Lenyűgöző díszletek és zseniális színészi játék."
+  },
+  {
+    id: 105, type: "sorozat", title: "The Last of Us", year: 2023, rating: 8.8, genre: "Dráma",
+    director: "Craig Mazin & Neil Druckmann", duration: "1 évad · 9 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg",
+    cast: [
+      {name: "Pedro Pascal", role: "Joel", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Bella Ramsey", role: "Ellie", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Anna Torv", role: "Tess", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Nick Offerman", role: "Bill", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["HBO Max"],
+    desc: "Egy poszt-apokaliptikus világban egy csempész kísér egy fiatal lányt az országon át. A népszerű videojáték adaptációja."
+  },
+  {
+    id: 106, type: "sorozat", title: "Chernobyl", year: 2019, rating: 9.4, genre: "Dráma",
+    director: "Craig Mazin", duration: "1 évad · 5 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg",
+    cast: [
+      {name: "Jared Harris", role: "Legasov", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Stellan Skarsgård", role: "Shcherbina", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Emily Watson", role: "Khomyuk", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Paul Ritter", role: "Dyatlov", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["HBO Max"],
+    desc: "Az 1986-os csernobili atomkatasztrófa drámai feldolgozása. A történelem egyik legsúlyosabb nukleáris balesetének háttere."
+  },
+  {
+    id: 107, type: "sorozat", title: "The Witcher", year: 2019, rating: 8.0, genre: "Fantasy",
+    director: "Lauren Schmidt Hissrich", duration: "3 évad · 24 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/7vjaCdMw15FEbXyLQTVa04URsPm.jpg",
+    cast: [
+      {name: "Henry Cavill", role: "Geralt", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Anya Chalotra", role: "Yennefer", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Freya Allan", role: "Ciri", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Joey Batey", role: "Jaskier", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Geralt, a szörnyvadász witcher kalandjai egy varázslatokkal teli világban. A népszerű lengyel regénysorozat adaptációja."
+  },
+  {
+    id: 108, type: "sorozat", title: "The Mandalorian", year: 2019, rating: 8.7, genre: "Sci-fi",
+    director: "Jon Favreau", duration: "3 évad · 24 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/eU1i6eHXlzMOlEq0ku1Rzq7Y4wA.jpg",
+    cast: [
+      {name: "Pedro Pascal", role: "Mandalori", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Carl Weathers", role: "Greef Karga", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Giancarlo Esposito", role: "Moff Gideon", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Emily Swallow", role: "Armorer", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Disney+"],
+    desc: "Egy magányos mandalori fejvadász egy különleges gyermeket védelmez a Galaxis peremén. A Star Wars univerzum üdvöskéje."
+  },
+  {
+    id: 109, type: "sorozat", title: "Dark", year: 2017, rating: 8.7, genre: "Sci-fi",
+    director: "Baran bo Odar & Jantje Friese", duration: "3 évad · 26 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/apbrbWs8M9lyOpJYU5WXrpFbk1Z.jpg",
+    cast: [
+      {name: "Louis Hofmann", role: "Jonas", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Lisa Vicari", role: "Martha", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Maja Schöne", role: "Hannah", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Oliver Masucci", role: "Ulrich", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Egy német kisvárosban gyerekek tűnnek el, és a nyomozás során kiderül, hogy négy család sorsa időutazáson és generációkon átívelő titkokon keresztül fonódik össze."
+  },
+  {
+    id: 110, type: "sorozat", title: "Peaky Blinders", year: 2013, rating: 8.8, genre: "Krimi",
+    director: "Steven Knight", duration: "6 évad · 36 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/vUUqzWa2LnHIVqkaKVlVGkVcZIW.jpg",
+    cast: [
+      {name: "Cillian Murphy", role: "Tommy Shelby", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Tom Hardy", role: "Alfie Solomons", img: "https://image.tmdb.org/t/p/w200/d81K0RH8UX7tZj49tZaQhZ9ewH.jpg"},
+      {name: "Helen McCrory", role: "Polly", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Paul Anderson", role: "Arthur", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "Az 1920-as évek Birminghamjében a Shelby család gengszterbirodalmának felemelkedése. Cillian Murphy lehengerlő alakítása."
+  },
+  {
+    id: 111, type: "sorozat", title: "Sherlock", year: 2010, rating: 9.1, genre: "Krimi",
+    director: "Steven Moffat & Mark Gatiss", duration: "4 évad · 13 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/7WTsnHkbA0FaG6R9twfFde0I9hl.jpg",
+    cast: [
+      {name: "Benedict Cumberbatch", role: "Sherlock", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Martin Freeman", role: "Dr. Watson", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Una Stubbs", role: "Mrs. Hudson", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Rupert Graves", role: "Lestrade", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "Sherlock Holmes és Dr. Watson modern kori kalandjai Londonban. Cumberbatch és Freeman kémiája teszi felejthetetlenné."
+  },
+  {
+    id: 112, type: "sorozat", title: "Money Heist", year: 2017, rating: 8.2, genre: "Krimi",
+    director: "Álex Pina", duration: "5 évad · 41 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg",
+    cast: [
+      {name: "Úrsula Corberó", role: "Tokio", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Álvaro Morte", role: "Professzor", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Itziar Ituño", role: "Raquel", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Pedro Alonso", role: "Berlin", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "A Professzor csapata a spanyol pénzverdét és bankot rabol ki egy többlépcsős tervvel. Feszült, fordulatos spanyol krimisorozat."
+  },
+  {
+    id: 113, type: "sorozat", title: "Wednesday", year: 2022, rating: 8.1, genre: "Fantasy",
+    director: "Alfred Gough & Miles Millar", duration: "1 évad · 8 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg",
+    cast: [
+      {name: "Jenna Ortega", role: "Wednesday", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Gwendoline Christie", role: "Larissa", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Riki Lindhome", role: "Dr. Kinbott", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Catherine Zeta-Jones", role: "Morticia", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Wednesday Addams a Nevermore Akadémiára kerül, ahol természetfeletti képességeit fejleszti és gyilkossági rejtélyt old meg."
+  },
+  {
+    id: 114, type: "sorozat", title: "The Boys", year: 2019, rating: 8.7, genre: "Akció",
+    director: "Eric Kripke", duration: "4 évad · 32 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/2zmTngn1tYC1AvfnrFLhxeD82hz.jpg",
+    cast: [
+      {name: "Karl Urban", role: "Billy Butcher", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Jack Quaid", role: "Hughie", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Antony Starr", role: "Homelander", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Erin Moriarty", role: "Starlight", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Prime"],
+    desc: "Egy csapat civil bosszút esküszik a korrupt szuperhősök ellen. Nyers, véres és társadalomkritikus szuperhős-szatíra."
+  },
+  {
+    id: 115, type: "sorozat", title: "Loki", year: 2021, rating: 8.2, genre: "Sci-fi",
+    director: "Michael Waldron", duration: "2 évad · 12 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/voHUmluYmKyleFkTu3lOXQG702u.jpg",
+    cast: [
+      {name: "Tom Hiddleston", role: "Loki", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Sophia Di Martino", role: "Sylvie", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Owen Wilson", role: "Mobius", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Gugu Mbatha-Raw", role: "Ravonna", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Disney+"],
+    desc: "Loki a TVA (Idő Variancia Hatóság) fogságába kerül, és egy időutazós kalandban kell helyreállítania a rendet."
+  },
+  {
+    id: 116, type: "sorozat", title: "Squid Game", year: 2021, rating: 8.0, genre: "Dráma",
+    director: "Hwang Dong-hyuk", duration: "1 évad · 9 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg",
+    cast: [
+      {name: "Lee Jung-jae", role: "Seong Gi-hun", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Park Hae-soo", role: "Cho Sang-woo", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Wi Ha-joon", role: "Hwang Jun-ho", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Jung Ho-yeon", role: "Kang Sae-byeok", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Több száz eladósodott ember versenyez gyerekjátékokban hatalmas nyereményért – de a vesztesek meghalnak."
+  },
+  {
+    id: 117, type: "sorozat", title: "The Office (US)", year: 2005, rating: 9.0, genre: "Vígjáték",
+    director: "Greg Daniels", duration: "9 évad · 201 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/7DJKHzAi83BmQrWLrYYOqcoKfhR.jpg",
+    cast: [
+      {name: "Steve Carell", role: "Michael Scott", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Rainn Wilson", role: "Dwight", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "John Krasinski", role: "Jim", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Jenna Fischer", role: "Pam", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Prime", "Netflix"],
+    desc: "Egy papíripari cég mindennapjai a Dunder Mifflin irodájában, Michael Scott főnök vezetésével. A mockumentary-stílusú vígjáték klasszikus."
+  },
+  {
+    id: 118, type: "sorozat", title: "Fleabag", year: 2016, rating: 8.7, genre: "Vígjáték",
+    director: "Phoebe Waller-Bridge", duration: "2 évad · 12 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/48m6MefDWtQ28DqXUGoqOO4tKz5.jpg",
+    cast: [
+      {name: "Phoebe Waller-Bridge", role: "Fleabag", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Sian Clifford", role: "Claire", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Olivia Colman", role: "Mostohaanya", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Andrew Scott", role: "Pap", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Prime"],
+    desc: "Egy szarkasztikus, szexuálisan aktív londoni nő élete és tragédiái, aki gyakran töri meg a negyedik falat. Zseniális brit vígjáték."
+  },
+  {
+    id: 119, type: "sorozat", title: "A Berni Követ", year: 2023, rating: 8.0, genre: "Krimi",
+    director: "Viktor Bodó", duration: "1 évad · 8 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/6jZ4Mv1YwZ5Pkq1XNQj5v5j5v5j.jpg",
+    cast: [
+      {name: "Szabó Kimmel Tamás", role: "Főszereplő", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Tóth Ildikó", role: "Nyomozó", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Nagy Zsolt", role: "Rendőr", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Balsai Móni", role: "Újságíró", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Egy magyar krimisorozat a '80-as évekből, ahol egy csendes vidéki városban nyomoznak egy rejtélyes ügyben."
+  },
+  {
+    id: 120, type: "sorozat", title: "Arcane", year: 2021, rating: 9.0, genre: "Animáció",
+    director: "Pascal Charrue & Arnaud Delord", duration: "1 évad · 9 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+    cast: [
+      {name: "Hailee Steinfeld", role: "Vi (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Ella Purnell", role: "Jinx (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Kevin Alejandro", role: "Jayce (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Katie Leung", role: "Caitlyn (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "Két nővér, Vi és Jinx története egy konfliktusoktól szabdalt világban. Lenyűgöző animáció a League of Legends univerzumából."
+  },
+  {
+    id: 121, type: "sorozat", title: "A Sötét Kristály: Az Ellenállás Kora", year: 2019, rating: 8.4, genre: "Fantasy",
+    director: "Jeffrey Addiss & Will Matthews", duration: "1 évad · 10 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg",
+    cast: [
+      {name: "Taron Egerton", role: "Rian (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Anya Taylor-Joy", role: "Brea (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Nathalie Emmanuel", role: "Deet (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Mark Hamill", role: "The Scientist (hang)", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix"],
+    desc: "A Dark Crystal univerzumában játszódó fantasy-sorozat, ahol a Gelflingek harcba szállnak a gonosz Skeksis ellen."
+  },
+  {
+    id: 122, type: "sorozat", title: "Hannibal", year: 2013, rating: 8.5, genre: "Horror",
+    director: "Bryan Fuller", duration: "3 évad · 39 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg",
+    cast: [
+      {name: "Mads Mikkelsen", role: "Hannibal", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Hugh Dancy", role: "Will Graham", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Caroline Dhavernas", role: "Alana Bloom", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"},
+      {name: "Laurence Fishburne", role: "Jack Crawford", img: "https://image.tmdb.org/t/p/w200/5j5j5j5j5j5j5j5j5j5j5j5j5j5j.jpg"}
+    ],
+    platforms: ["Netflix", "Prime"],
+    desc: "Will Graham FBI profilozó és Dr. Hannibal Lecter pszichiáter bonyolult kapcsolata. Elegáns, hátborzongató thriller-sorozat."
+  }
+
+  ,{
+    id: 123, type: "sorozat", title: "The Big Bang Theory (Agymenők)", year: 2007, rating: 8.1, genre: "Vígjáték",
+    director: "Chuck Lorre és Bill Prady", duration: "12 évad · 279 epizód",
+    poster: "https://image.tmdb.org/t/p/w500/ooBGRQBdbGzBxAVfExiO8r7kloA.jpg",
+    cast: [
+      {name: "Johnny Galecki", role: "Leonard Hofstadter", img: ""},
+      {name: "Jim Parsons", role: "Sheldon Cooper", img: ""},
+      {name: "Kaley Cuoco", role: "Penny", img: ""},
+      {name: "Simon Helberg", role: "Howard Wolowitz", img: ""},
+      {name: "Kunal Nayyar", role: "Raj Koothrappali", img: ""}
+    ],
+    platforms: [],
+    desc: "Leonard és Sheldon két zseniális, de társas helyzetekben ügyetlen fizikus. Életük fenekestül felfordul, amikor Penny beköltözik a szomszédba. Barátság, tudomány és rengeteg humor egy népszerű sitcomban."
+  },
+  {"id": 700, "type": "film", "title": "A Grand Budapest Hotel", "year": 2014, "rating": 8.1, "genre": "Vígjáték", "director": "Wes Anderson", "duration": "100 perc", "poster": "", "wikiTitle": "The Grand Budapest Hotel", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy különleges szálloda portása és fiatal segédje váratlan kalandba keveredik."},
+  {"id": 701, "type": "film", "title": "Élősködők", "year": 2019, "rating": 8.5, "genre": "Thriller", "director": "Bong Joon-ho", "duration": "132 perc", "poster": "", "wikiTitle": "Parasite (2019 film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Két dél-koreai család sorsa különös módon összefonódik."},
+  {"id": 702, "type": "film", "title": "Tőrbe ejtve", "year": 2019, "rating": 7.9, "genre": "Krimi", "director": "Rian Johnson", "duration": "130 perc", "poster": "", "wikiTitle": "Knives Out", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy különc detektív egy gazdag család rejtélyes halálesetét vizsgálja."},
+  {"id": 703, "type": "film", "title": "Minden, mindenhol, mindenkor", "year": 2022, "rating": 7.8, "genre": "Sci-fi", "director": "Daniel Kwan és Daniel Scheinert", "duration": "139 perc", "poster": "", "wikiTitle": "Everything Everywhere All at Once", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy mosodatulajdonos különös multiverzum-kalandba csöppen."},
+  {"id": 704, "type": "film", "title": "A tökéletes trükk", "year": 2006, "rating": 8.5, "genre": "Thriller", "director": "Christopher Nolan", "duration": "130 perc", "poster": "", "wikiTitle": "The Prestige (film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Két bűvész rivalizálása veszélyes megszállottsággá válik."},
+  {"id": 705, "type": "film", "title": "Érkezés", "year": 2016, "rating": 7.9, "genre": "Sci-fi", "director": "Denis Villeneuve", "duration": "116 perc", "poster": "", "wikiTitle": "Arrival (film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy nyelvész az idegen látogatók üzenetét próbálja megfejteni."},
+  {"id": 706, "type": "film", "title": "A világítótorony", "year": 2019, "rating": 7.4, "genre": "Horror", "director": "Robert Eggers", "duration": "109 perc", "poster": "", "wikiTitle": "The Lighthouse (2019 film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Két világítótorony-őr elszigeteltsége lassan rémálommá változik."},
+  {"id": 707, "type": "film", "title": "1917", "year": 2019, "rating": 8.2, "genre": "Dráma", "director": "Sam Mendes", "duration": "119 perc", "poster": "", "wikiTitle": "1917 (2019 film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Két katona életveszélyes üzenetet visz át a frontvonalon."},
+  {"id": 708, "type": "film", "title": "A menü", "year": 2022, "rating": 7.2, "genre": "Thriller", "director": "Mark Mylod", "duration": "107 perc", "poster": "", "wikiTitle": "The Menu (2022 film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy exkluzív vacsora váratlanul hátborzongató fordulatot vesz."},
+  {"id": 709, "type": "film", "title": "Szólíts a neveden", "year": 2017, "rating": 7.8, "genre": "Romantikus", "director": "Luca Guadagnino", "duration": "132 perc", "poster": "", "wikiTitle": "Call Me by Your Name (film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy nyár különleges kapcsolat történetévé válik Olaszországban."},
+  {"id": 710, "type": "film", "title": "A bálna", "year": 2022, "rating": 7.6, "genre": "Dráma", "director": "Darren Aronofsky", "duration": "117 perc", "poster": "", "wikiTitle": "The Whale (2022 film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy visszahúzódó tanár szeretné rendezni kapcsolatát lányával."},
+  {"id": 711, "type": "film", "title": "A sziget szellemei", "year": 2022, "rating": 7.7, "genre": "Dráma", "director": "Martin McDonagh", "duration": "114 perc", "poster": "", "wikiTitle": "The Banshees of Inisherin", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Két régi barát viszálya felforgat egy ír szigetet."},
+  {"id": 712, "type": "film", "title": "A fiú és a szürke gém", "year": 2023, "rating": 7.4, "genre": "Animáció", "director": "Mijazaki Hajao", "duration": "124 perc", "poster": "", "wikiTitle": "The Boy and the Heron", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy fiú titokzatos, varázslatos világba jut."},
+  {"id": 713, "type": "film", "title": "Szegény párák", "year": 2023, "rating": 7.4, "genre": "Fantasy", "director": "Yorgos Lanthimos", "duration": "141 perc", "poster": "", "wikiTitle": "Poor Things (film)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy fiatal nő szokatlan önfelfedező útra indul."},
+  {"id": 714, "type": "sorozat", "title": "Fargo", "year": 2014, "rating": 8.9, "genre": "Krimi", "director": "Noah Hawley", "duration": "5 évad", "poster": "", "wikiTitle": "Fargo (TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Különös bűnesetek és sötét humor az amerikai Középnyugaton."},
+  {"id": 715, "type": "sorozat", "title": "Mindhunter", "year": 2017, "rating": 8.6, "genre": "Krimi", "director": "Joe Penhall", "duration": "2 évad", "poster": "", "wikiTitle": "Mindhunter (TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "FBI-ügynökök a sorozatgyilkosok gondolkodását kutatják."},
+  {"id": 716, "type": "sorozat", "title": "Succession", "year": 2018, "rating": 8.8, "genre": "Dráma", "director": "Jesse Armstrong", "duration": "4 évad", "poster": "", "wikiTitle": "Succession (TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy médiabirodalom örökösei a hatalomért küzdenek."},
+  {"id": 717, "type": "sorozat", "title": "Ted Lasso", "year": 2020, "rating": 8.8, "genre": "Vígjáték", "director": "Bill Lawrence és Jason Sudeikis", "duration": "3 évad", "poster": "", "wikiTitle": "Ted Lasso", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy optimista amerikai edző angol futballcsapatot vezet."},
+  {"id": 718, "type": "sorozat", "title": "The Bear", "year": 2022, "rating": 8.5, "genre": "Dráma", "director": "Christopher Storer", "duration": "4 évad", "poster": "", "wikiTitle": "The Bear (TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy séf megpróbál rendet teremteni családi éttermében."},
+  {"id": 719, "type": "sorozat", "title": "Silo", "year": 2023, "rating": 8.1, "genre": "Sci-fi", "director": "Graham Yost", "duration": "2 évad", "poster": "", "wikiTitle": "Silo (TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy föld alatti közösség titkait kezdi kutatni egy mérnök."},
+  {"id": 720, "type": "sorozat", "title": "Slow Horses", "year": 2022, "rating": 8.3, "genre": "Thriller", "director": "Will Smith", "duration": "Több évad", "poster": "", "wikiTitle": "Slow Horses", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy mellőzött brit kémszervezet csapata váratlan ügyekbe keveredik."},
+  {"id": 721, "type": "sorozat", "title": "Only Murders in the Building", "year": 2021, "rating": 8.1, "genre": "Vígjáték", "director": "Steve Martin és John Hoffman", "duration": "Több évad", "poster": "", "wikiTitle": "Only Murders in the Building", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Három szomszéd valódi gyilkossági podcastet készít."},
+  {"id": 722, "type": "sorozat", "title": "The White Lotus", "year": 2021, "rating": 8.0, "genre": "Dráma", "director": "Mike White", "duration": "Több évad", "poster": "", "wikiTitle": "The White Lotus", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Luxusüdülők vendégeinek titkai és konfliktusai tárulnak fel."},
+  {"id": 723, "type": "sorozat", "title": "Andor", "year": 2022, "rating": 8.5, "genre": "Sci-fi", "director": "Tony Gilroy", "duration": "2 évad", "poster": "", "wikiTitle": "Andor (TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy lázadó útja a Csillagok háborúja világában."},
+  {"id": 724, "type": "sorozat", "title": "Arcane", "year": 2021, "rating": 9.0, "genre": "Animáció", "director": "Christian Linke és Alex Yee", "duration": "2 évad", "poster": "", "wikiTitle": "Arcane (TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Két testvér sorsa egy kettészakadt fantasy-városban."},
+  {"id": 725, "type": "sorozat", "title": "Shōgun", "year": 2024, "rating": 8.6, "genre": "Dráma", "director": "Rachel Kondo és Justin Marks", "duration": "Több évad", "poster": "", "wikiTitle": "Shōgun (2024 TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Hatalmi harcok a feudális Japánban."},
+  {"id": 726, "type": "sorozat", "title": "Fallout", "year": 2024, "rating": 8.3, "genre": "Sci-fi", "director": "Graham Wagner és Geneva Robertson-Dworet", "duration": "Több évad", "poster": "", "wikiTitle": "Fallout (American TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Túlélők kalandjai egy posztapokaliptikus világban."},
+  {"id": 727, "type": "sorozat", "title": "The Diplomat", "year": 2023, "rating": 8.0, "genre": "Thriller", "director": "Debora Cahn", "duration": "Több évad", "poster": "", "wikiTitle": "The Diplomat (American TV series)", "cast": [], "platforms": ["Elérhetőség változó"], "desc": "Egy amerikai diplomata nemzetközi válságok közepébe kerül."}
+];
+
+// Azonos címek ne jelenjenek meg többször a katalógusban.
+const seenTitles = new Set();
+for (let i = content.length - 1; i >= 0; i--) {
+  const item = content[i];
+  const key = item.type + ":" + item.title.toLocaleLowerCase("hu").replace(/\s*\(us\)$/, "").trim();
+  if (seenTitles.has(key)) content.splice(i, 1);
+  else seenTitles.add(key);
+}
+
+function posterFallback(title, portrait = false) {
+  const name = String(title || "Film / sorozat");
+  const safe = name.replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+
+  const width = portrait ? 240 : 400;
+  const height = portrait ? 240 : 600;
+
+  const words = safe.split(/\s+/);
+  const lines = [];
+  let line = "";
+
+  for (const word of words) {
+    if ((line + " " + word).length > 18 && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line += (line ? " " : "") + word;
+    }
+  }
+  if (line) lines.push(line);
+
+  const text = lines.slice(0, 4).map((t, i) =>
+    `<text x="50%" y="${height / 2 + i * 36}"
+      text-anchor="middle" fill="white"
+      font-family="Arial" font-size="24"
+      font-weight="bold">${t}</text>`
+  ).join("");
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg"
+      width="${width}" height="${height}">
+      <rect width="100%" height="100%"
+        fill="#800020"/>
+      ${text}
+    </svg>
+  `;
+
+  return "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(svg);
+}
+
+const wikiImageCache = new Map();
+
+const wikipediaTitles = {
+  "Better Call Saul": "Better Call Saul",
+  "The Office": "The Office (American TV series)",
+  "The Office (US)": "The Office (American TV series)",
+  "Jóbarátok": "Friends (1994 TV series)",
+  "Dark": "Dark (TV series)",
+  "Severance": "Severance (TV series)",
+  "The Last of Us": "The Last of Us (TV series)",
+  "Wednesday": "Wednesday (TV series)",
+  "Peaky Blinders": "Peaky Blinders"
+};
+
+async function findAlternativeImage(title) {
+  const item = content.find(c => c.title === title);
+  const key = item?.wikiTitle || wikipediaTitles[title] || title;
+  if (!wikiImageCache.has(key)) {
+    wikiImageCache.set(key, (async () => {
+      try {
+        // Először a pontos Wikipédia-szócikkhez tartozó képet kérjük le.
+        const api = "https://en.wikipedia.org/w/api.php?origin=*&action=query" +
+          "&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=600" +
+          "&format=json&titles=" + encodeURIComponent(key);
+        const response = await fetch(api);
+        if (!response.ok) return null;
+        const data = await response.json();
+        const pages = Object.values(data.query?.pages || {});
+        return pages.find(p => p.thumbnail?.source)?.thumbnail.source || null;
+      } catch (e) {
+        console.warn("Nem sikerült képet lekérni:", key, e);
+        return null;
+      }
+    })());
+  }
+  return wikiImageCache.get(key);
+}
+
+function setupImageRecovery(root = document) {
+  root.querySelectorAll("img").forEach(img => {
+    if (img.dataset.imageRecovery === "1") return;
+
+    img.dataset.imageRecovery = "1";
+
+    const title = img.getAttribute("alt") ||
+      "Film / sorozat";
+
+    const portrait = !!img.closest(
+      ".cast-card, .cast-item, .cast-photo, .actor-card"
+    );
+
+    const fallback = posterFallback(title, portrait);
+
+    img.onerror = async function () {
+      this.onerror = null;
+      if (!this.src || this.src === location.href) this.src = fallback;
+
+      const replacement =
+        await findAlternativeImage(title);
+
+      if (!this.isConnected) return;
+
+      if (!replacement) {
+        this.src = fallback;
+        return;
+      }
+
+      const probe = new Image();
+
+      probe.onload = () => {
+        if (this.isConnected) {
+          this.src = replacement;
+        }
+      };
+
+      probe.onerror = () => {
+        if (this.isConnected) {
+          this.src = fallback;
+        }
+      };
+
+      probe.src = replacement;
+    };
+
+    const src = img.getAttribute("src");
+
+    if (!src || src.startsWith("data:image/svg+xml") || /undefined|null|5j5j5j5j/.test(src)) {
+      img.onerror();
+    } else if (img.complete && img.naturalWidth === 0) {
+      img.onerror();
+    }
+  });
+}
+
+const imageObserver = new MutationObserver(() => {
+  setupImageRecovery();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupImageRecovery();
+
+  imageObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+});
+
+
+function setNav(name) {
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.querySelector(`[data-nav="${name}"]`);
+  if (btn) btn.classList.add("active");
+}
+
+let currentSection = "home";
+let previousView = () => goHome();
+function goHome() {
+  currentSection = "home";
+  document.getElementById("searchInput").value = "";
+  showPage("home");
+  setNav("home");
+  renderHome();
+}
+
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-" + page).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function scrollRow(id, direction) {
+  const row = document.getElementById(id);
+  const scrollAmount = row.clientWidth * 0.8;
+  row.scrollBy({
+    left: direction * scrollAmount,
+    behavior: 'smooth'
+  });
+}
+
+
+function getTop10(type) {
+  return content
+    .filter(c => c.type === type)
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 10);
+}
+
+function getNewReleases() {
+  return [...content]
+    .filter(c => c.year >= 2019)
+    .sort((a, b) => b.year - a.year)
+    .slice(0, 12);
+}
+
+function renderHome() {
+  const topFilms = getTop10("film");
+  document.getElementById("top10Films").innerHTML = topFilms.map((m, i) => `
+    <div class="top10-item" onclick="openDetail(${m.id})">
+      <div class="top10-poster-wrap">
+        <div class="top10-rank">${i + 1}</div>
+        <img src="${m.poster}" alt="${m.title}">
+        <div class="top10-info">
+          <div class="top10-title">${m.title}</div>
+          <div class="top10-rating">⭐ ${m.rating}</div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  const topSeries = getTop10("sorozat");
+  document.getElementById("top10Series").innerHTML = topSeries.map((m, i) => `
+    <div class="top10-item" onclick="openDetail(${m.id})">
+      <div class="top10-poster-wrap">
+        <div class="top10-rank">${i + 1}</div>
+        <img src="${m.poster}" alt="${m.title}">
+        <div class="top10-info">
+          <div class="top10-title">${m.title}</div>
+          <div class="top10-rating">⭐ ${m.rating}</div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  const newOnes = getNewReleases();
+  document.getElementById("newReleases").innerHTML = newOnes.map(m => renderCard(m, true)).join("");
+}
+
+function renderCard(m, showNew = false) {
+  return `
+    <div class="card" onclick="openDetail(${m.id})">
+      <div class="card-poster">
+        ${showNew ? '<span class="new-badge">✨ ÚJ</span>' : ''}
+        <span class="rating-badge">⭐ ${m.rating}</span>
+        <img src="${m.poster}" alt="${m.title}" loading="lazy">
+      </div>
+      <div class="card-info">
+        <div class="card-title">${m.title}</div>
+        <div class="card-meta">
+          <span>${m.year}</span>
+          <span>${m.genre}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+
+const genreEmojis = {
+  "Akció": "💥",
+  "Dráma": "🎭",
+  "Sci-fi": "🚀",
+  "Krimi": "🕵️",
+  "Fantasy": "🐉",
+  "Animáció": "🎨",
+  "Vígjáték": "😂",
+  "Horror": "👻",
+  "Romantikus": "💕",
+  "Thriller": "😱"
+};
+
+function showCategories(type) {
+  currentSection = type;
+  showPage("categories");
+  setNav(type === "film" ? "films" : "series");
+  
+  const isFilm = type === "film";
+  const items = content.filter(c => c.type === type);
+  
+  document.getElementById("catTitle").innerHTML = isFilm ? "🎥 Filmek" : "📺 Sorozatok";
+  document.getElementById("catSubtitle").textContent = 
+    `Válassz kategóriát – összesen ${items.length} ${isFilm ? "film" : "sorozat"} érhető el`;
+
+  const genres = [...new Set(items.map(i => i.genre))].sort();
+  
+  const container = document.getElementById("catButtons");
+  container.innerHTML = `<div class="cat-tile" onclick="showAll('${type}', 'all')"><span class="emoji">📚</span><span>Összes ${isFilm ? "film" : "sorozat"}</span><span class="cat-count">${items.length} db</span></div>` + genres.map(g => {
+    const count = items.filter(i => i.genre === g).length;
+    return `
+      <div class="cat-tile" onclick="showList('${type}', '${g}')">
+        <span class="emoji">${genreEmojis[g] || "🎬"}</span>
+        <span>${g}</span>
+        <span class="cat-count">${count} db</span>
+      </div>
+    `;
+  }).join("");
+  container.insertAdjacentHTML("afterend", "");
+  let preview = document.getElementById("categoryPreview");
+  if (!preview) { preview = document.createElement("div"); preview.id="categoryPreview"; preview.className="section"; container.after(preview); }
+  preview.innerHTML = `<div class="section-header"><h2>${isFilm ? "🎥 Filmek" : "📺 Sorozatok"}</h2></div><div class="grid">${items.slice().sort((a,b)=>b.rating-a.rating).map(m=>renderCard(m)).join("")}</div>`;
+}
+
+
+function showList(type, genre) {
+  currentSection = type;
+  showPage("list");
+  
+  const items = content
+    .filter(c => c.type === type && c.genre === genre)
+    .sort((a, b) => b.rating - a.rating);
+  
+  const isFilm = type === "film";
+  
+  document.getElementById("listTitle").innerHTML = 
+    `${genreEmojis[genre] || "🎬"} ${genre} ${isFilm ? "filmek" : "sorozatok"}`;
+  document.getElementById("listSubtitle").textContent = 
+    `${items.length} találat · értékelés szerint rendezve`;
+  
+  document.getElementById("listBackBtn").onclick = () => showCategories(type);
+  
+  const grid = document.getElementById("listGrid");
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="empty"><div>🎞️</div><p>Nincs találat ebben a kategóriában</p></div>`;
+    return;
+  }
+  
+  grid.innerHTML = items.map(m => renderCard(m)).join("");
+}
+
+function showAll(type, mode) {
+  currentSection = type;
+  showPage("list");
+  
+  let items = content.filter(c => c.type === type);
+  if (mode === "top") items = items.sort((a, b) => b.rating - a.rating);
+  
+  const isFilm = type === "film";
+  
+  document.getElementById("listTitle").innerHTML = 
+    mode === "top" ? `🏆 Top ${isFilm ? "Film" : "Sorozat"}` : `🎬 Összes ${isFilm ? "film" : "sorozat"}`;
+  document.getElementById("listSubtitle").textContent = 
+    `${items.length} találat · értékelés szerint rendezve`;
+  
+  document.getElementById("listBackBtn").onclick = () => showCategories(type);
+  
+  document.getElementById("listGrid").innerHTML = items.map(m => renderCard(m)).join("");
+}
+
+
+function getPlatformClass(platform) {
+  const p = platform.toLowerCase();
+  if (p.includes("netflix")) return "netflix";
+  if (p.includes("hbo")) return "hbo";
+  if (p.includes("disney")) return "disney";
+  if (p.includes("apple")) return "apple";
+  if (p.includes("prime")) return "prime";
+  if (p.includes("paramount")) return "paramount";
+  return "apple";
+}
+
+function openDetail(id) {
+  if (!document.getElementById("page-detail").classList.contains("active")) {
+    const from = document.querySelector(".page.active")?.id;
+    if (from === "page-list") {
+      const title = document.getElementById("listTitle").innerHTML;
+      const subtitle = document.getElementById("listSubtitle").textContent;
+      const html = document.getElementById("listGrid").innerHTML;
+      const back = document.getElementById("listBackBtn").onclick;
+      previousView = () => { showPage("list"); document.getElementById("listTitle").innerHTML=title; document.getElementById("listSubtitle").textContent=subtitle; document.getElementById("listGrid").innerHTML=html; document.getElementById("listBackBtn").onclick=back; };
+    } else if (from === "page-categories") previousView = () => showCategories(currentSection);
+    else previousView = () => goHome();
+  }
+  const item = content.find(c => c.id === id);
+  if (!item) return;
+  
+  const isFilm = item.type === "film";
+  const similar = content
+    .filter(c => c.genre === item.genre && c.id !== item.id && c.type === item.type)
+    .slice(0, 6);
+
+  document.getElementById("detailContent").innerHTML = `
+    <button class="back-btn" onclick="previousView()">← Vissza</button>
+    
+    <div class="detail-hero">
+      <div class="detail-poster">
+        <img src="${item.poster}" alt="${item.title}">
+      </div>
+      <div class="detail-info">
+        <h1>${item.title}</h1>
+        <div class="detail-tags">
+          <span class="detail-tag ${isFilm ? 'red' : 'blue'}">${isFilm ? "🎥 Film" : "📺 Sorozat"}</span>
+          <span class="detail-tag gold">⭐ ${item.rating}/10</span>
+          <span class="detail-tag">${item.genre}</span>
+          <span class="detail-tag">📅 ${item.year}</span>
+        </div>
+
+        <p class="detail-desc">${item.desc}</p>
+
+        <div class="info-row">
+          <div class="info-box">
+            <div class="lbl">${isFilm ? "Rendező" : "Készítő"}</div>
+            <div class="val">${item.director}</div>
+          </div>
+          <div class="info-box">
+            <div class="lbl">${isFilm ? "Hossz" : "Évadok"}</div>
+            <div class="val">${item.duration}</div>
+          </div>
+          <div class="info-box">
+            <div class="lbl">Műfaj</div>
+            <div class="val">${item.genre}</div>
+          </div>
+          <div class="info-box">
+            <div class="lbl">Értékelés</div>
+            <div class="val">⭐ ${item.rating}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cast-section">
+      <h3>🎭 Szereplők</h3>
+      <div class="cast-grid">
+        ${item.cast.map(c => `
+          <div class="cast-item">
+            <div class="cast-photo">
+              <img src="${c.img}" alt="${c.name}">
+            </div>
+            <div class="cast-name">${c.name}</div>
+            <div class="cast-role">${c.role}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="platforms-section">
+      <h3>📺 Hol nézheted meg?</h3>
+      <div class="platforms-list">
+        ${item.platforms.map(p => `
+          <span class="platform-chip ${getPlatformClass(p)}">${p}</span>
+        `).join("")}
+      </div>
+    </div>
+
+    ${similar.length > 0 ? `
+    <div class="similar-section">
+      <h3>💡 Hasonló ajánlások</h3>
+      <div class="similar-grid">
+        ${similar.map(s => `
+          <div class="similar-card" onclick="openDetail(${s.id})">
+            <img src="${s.poster}" alt="${s.title}">
+            <div class="title">${s.title}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>` : ""}
+  `;
+  
+  showPage("detail");
+}
+
+
+function normalizeSearch(value) {
+  return String(value).toLocaleLowerCase("hu").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+}
+document.getElementById("searchInput").addEventListener("input", e => {
+  const query = normalizeSearch(e.target.value);
+  if (!query) {
+    if (currentSection === "film" || currentSection === "sorozat") showCategories(currentSection);
+    else goHome();
+    return;
+  }
+  const type = currentSection === "film" || currentSection === "sorozat" ? currentSection : null;
+  const results = content.filter(c => (!type || c.type === type) && normalizeSearch(c.title).includes(query))
+    .sort((a,b) => b.rating - a.rating);
+  showPage("list");
+  document.getElementById("listBackBtn").onclick = () => type ? showCategories(type) : goHome();
+  document.getElementById("listTitle").textContent = "🔍 Keresési eredmények";
+  document.getElementById("listSubtitle").textContent = `${results.length} találat`;
+  document.getElementById("listGrid").innerHTML = results.length
+    ? results.map(m => renderCard(m)).join("")
+    : `<div class="empty"><div>🔍</div><p>Nincs ${type === "film" ? "film" : type === "sorozat" ? "sorozat" : "sorozat/film"} ilyen névvel jelenleg</p></div>`;
+});
+
+
+renderHome();
+setupImageRecovery();
+</script>
+
+</body>
+</html>
